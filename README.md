@@ -37,6 +37,15 @@
  ![AddProduct](https://user-images.githubusercontent.com/17870384/95772192-fb63f280-0cd9-11eb-999e-eadc38fc00df.PNG)
  
  
+ Register USer to check only admin have right to add/Edit/Remove Product from list using Role Mapping.
+ 
+ ![RegisterUser](https://user-images.githubusercontent.com/17870384/95772425-57c71200-0cda-11eb-9129-0a9ef27f37db.PNG)
+ 
+ 
+ 
+
+
+ 
 
  
  
