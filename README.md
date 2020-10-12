@@ -21,10 +21,17 @@
  
  ![productDetails](https://user-images.githubusercontent.com/17870384/95769964-509e0500-0cd6-11eb-8f1e-b5f1f9d78086.PNG)
  
+ CLick On PRoduct Image will get product information
+ 
+ ![ProductInfo](https://user-images.githubusercontent.com/17870384/95770833-a2935a80-0cd7-11eb-9309-dbb5af70e2a5.PNG)
  
  Product List For Editing , removing & adding product in List.
  
  ![ProductList1](https://user-images.githubusercontent.com/17870384/95770507-213bc800-0cd7-11eb-80c9-766cc2d67da7.PNG)
+ 
+ 
+ 
+ 
  
  
  
