@@ -1,0 +1,242 @@
+CREATE DATABASE ShoppingBrige
+
+USE [ShoppingBrige]
+GO
+
+
+CREATE TABLE [dbo].[Bridge_User](
+	[UserID] [int] IDENTITY(1,1) NOT NULL,
+	[FirstName] [varchar](100) NOT NULL,
+	[LastName] [varchar](150) NOT NULL,
+	[UserName] [varchar](200) NOT NULL,
+	[Password] [varchar](100) NOT NULL,
+	[MobileNo] [varchar](10) NOT NULL,
+	[EmailID] [varchar](50) NOT NULL,
+	[ConfirmPassword] [varchar](150) NULL,
+	[Role] [varchar](10) NULL
+) ON [PRIMARY]
+
+insert into Bridge_User values('admin','admin','admin','admin','8329008961','a@a.com','admin','Admin')
+
+CREATE TABLE [dbo].[Bridge_Products](
+	[ProductId] [int] IDENTITY(1,1) NOT NULL,
+	[P_Name] [varchar](100) NULL,
+	[Colour] [varchar](50) NULL,
+	[Dimensions] [varchar](50) NULL,
+	[Description] [varchar](2000) NULL,
+	[Price] [int] NULL,
+	[ModelNo] [varchar](50) NULL,
+	[Storage] [varchar](50) NULL,
+	[Warrenty] [int] NULL,
+	[OperatingSystem] [varchar](100) NULL,
+	[SimType] [varchar](100) NULL,
+	[Weight] [varchar](5) NULL,
+	[Camera] [varchar](5) NULL,
+	[EntryDate] [smalldatetime] NULL,
+	[ModifiedDate] [smalldatetime] NULL,
+	[Brand_Name] [varchar](15) NULL,
+	[Image] [image] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+
+Create FUNCTION [dbo].[ToBase64String]
+(
+	-- Add the parameters for the function here
+	@Encoded VARBINARY(MAX)
+)
+RETURNS VARCHAR(MAX)
+AS
+BEGIN
+
+	DECLARE @Decoded VARCHAR(max)    
+	SET @Decoded = CAST(N'' AS XML).value('xs:base64Binary(xs:hexBinary(sql:variable("@Encoded")))','VARCHAR(MAX)')
+
+	RETURN @Decoded
+
+END
+
+
+CREATE PROCEDURE [dbo].[Bridge_AddUser]
+	-- Add the parameters for the stored procedure here
+@FirstName varchar(100),
+@LastName varchar(150) ,
+@UserName varchar(200) ,
+@Password varchar(100) ,
+@ConfirmPassword varchar(100),
+@MobileNo varchar(10) ,
+@EmailID varchar(50) ,
+@status		 BIT OUTPUT,
+@message VARCHAR(500) OUTPUT
+AS
+BEGIN
+   SET FMTONLY OFF;
+	SET NOCOUNT ON;
+	    BEGIN TRY
+		select * from Bridge_User
+			Insert INTO [Bridge_User] (FirstName,LastName,UserName,Password,ConfirmPassword,MobileNo,EmailID,Role)
+			Values(@FirstName,@LastName,@UserName,@Password,@ConfirmPassword,@MobileNo,@EmailID,'User')
+			SET @status =1
+			SET @message ='User Created Successfully..'
+
+			END TRY
+	    BEGIN CATCH
+			SET @status =0
+			SET @message =ERROR_MESSAGE();
+		END CATCH
+END
+
+
+
+CREATE PROCEDURE [dbo].[Bridge_GetProductDetails]
+AS
+BEGIN
+   SET FMTONLY OFF;
+	SET NOCOUNT ON;
+
+	select * from  Bridge_Products with (nolock) 
+	  
+			
+END
+
+
+
+CREATE PROCEDURE [dbo].[Bridge_InsertUpdateProductDetails]   
+
+@Product_Id int =0,
+@P_Name    varchar(100)= NULL,
+@Colour     varchar(50)= NULL,  
+@Dimensions  varchar (50) =NULl,
+@Description  varchar(150) =NULL,     
+@Price   int =null,
+@ModelNo varchar(50)= null,
+@Storage     varchar(50) =null,
+@Warrenty     int =0,
+@OperatingSystem  varchar(100)= NULL,
+@SimType     varchar(100) =NULL,
+@Weight varchar(5) =NULL,
+@Camera  varchar(5)= NULL,
+@Brand_Name varchar(50)=NULL,
+@Image image=null,
+@Flag varchar(10),
+@status		 BIT OUTPUT,
+@Message	VARCHAR(500) OUTPUT
+AS
+BEGIN
+    
+	SET FMTONLY OFF;
+	SET NOCOUNT ON;
+
+     IF(@Flag ='Insert')
+	    BEGIN TRY    
+	       INSERT INTO Bridge_Products (P_Name,	Colour,	Dimensions,	Description	,Price,	ModelNo	,Storage	,Warrenty	,OperatingSystem	,SimType	,Weight,	Camera,	EntryDate,	Brand_Name,Image)
+		    VALUES(@P_Name,   	@Colour,   	@Dimensions ,@Description ,   	@Price,    	@ModelNo,  	@Storage,  	@Warrenty, 	@OperatingSystem,	@SimType,  	@Weight,   	@Camera,  GETDATE(),@Brand_Name,@Image)
+	         SET @status =1
+			 SET @message ='Product Saved Successfully..'
+	   END TRY
+	   BEGIN CATCH
+	        SET @status =0
+			SET @message =ERROR_MESSAGE()
+	   END CATCH
+
+    ELSE IF(@Flag ='Update')
+	    BEGIN TRY
+	       Update Bridge_Products SET
+						 P_Name         	=@P_Name         
+						,Colour         	=@Colour         
+						,Dimensions     	=@Dimensions     
+						,Description    	=@Description    
+						,Price          	=@Price          
+						,ModelNo        	=@ModelNo        
+						,Storage        	=@Storage        
+						,Warrenty       	=@Warrenty       
+						,OperatingSystem	=@OperatingSystem
+						,SimType        	=@SimType        
+						,Weight         	=@Weight         
+						,Camera         	=@Camera
+					
+						,Brand_Name         =@Brand_Name
+						,ModifiedDate       =getdate()
+						where ProductId=@Product_Id
+			 SET @status =1
+			 SET @message ='Product updated Successfully..'
+	   END TRY
+	   BEGIN CATCH
+	        SET @status =0
+			SET @message =ERROR_MESSAGE()
+	   END CATCH
+	
+	  ELSE 
+		 BEGIN TRY
+			     DELETE From Bridge_Products where ProductId = @Product_Id 
+						SET @status =1
+					 SET @message ='Product Deleted Successfully..'
+			END TRY
+			BEGIN CATCH
+			     SET @status =0
+					SET @message =ERROR_MESSAGE()
+			END CATCH
+END
+
+
+
+
+CREATE PROCEDURE [dbo].[Bridge_IsUserExists]
+	
+
+@UserName varchar(200) ,
+@Password varchar(100) 
+
+AS
+BEGIN
+   SET FMTONLY OFF;
+	SET NOCOUNT ON;
+	      Declare @Count int =0
+
+	SET  @Count = ( SELECT COUNT(*) From [Bridge_User] with (nolock) where USERNAME =@UserName and PASSWORD =@Password)
+ SELECT @Count as Count
+
+END
+GO
+
+
+
+CREATE PROCEDURE [dbo].[Bridge_UserDetails] 
+@UserName varchar(200) ,
+@Password varchar(100) 
+
+AS
+BEGIN
+   SET FMTONLY OFF;
+	SET NOCOUNT ON;
+     	 
+	 SELECT * From [Bridge_User] with (nolock) where USERNAME =@UserName and PASSWORD =@Password
+ 
+
+END
+GO
+
+
+CREATE PROCEDURE [dbo].[Bridge_UserDetails] 
+
+
+@UserName varchar(200) ,
+@Password varchar(100) 
+
+AS
+BEGIN
+   SET FMTONLY OFF;
+	SET NOCOUNT ON;
+     
+	 
+	 SELECT * From [Bridge_User] with (nolock) where USERNAME =@UserName and PASSWORD =@Password
+ 
+
+END
+GO
+
+
+
+
+
+
+
