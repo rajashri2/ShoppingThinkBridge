@@ -32,6 +32,13 @@
  Edit Information
  ![Edit](https://user-images.githubusercontent.com/17870384/95772003-ade78580-0cd9-11eb-863f-427e998e4cff.PNG)
  
+ Add Product to list
+ 
+ ![AddProduct](https://user-images.githubusercontent.com/17870384/95772192-fb63f280-0cd9-11eb-999e-eadc38fc00df.PNG)
+ 
+ 
+
+ 
  
 
  
